@@ -1,0 +1,50 @@
+`timescale 1ns/1ps
+module ClockDivider_tb;
+
+    reg CLK_50MHz;
+    reg rst_n;
+    wire CLK_1Hz;
+    wire CLK_sync;
+
+    // DUT
+    ClockDivider uut (
+        .CLK_50MHz(CLK_50MHz),
+        .rst_n(rst_n),
+        .CLK_1Hz(CLK_1Hz),
+        .CLK_sync(CLK_sync)
+    );
+
+    // 50 MHz clock: period = 20 ns
+    initial begin
+        CLK_50MHz = 1'b0;
+        forever #10 CLK_50MHz = ~CLK_50MHz;
+    end
+
+    // stimulus
+    initial begin
+        rst_n = 1'b0;
+        #100;
+        rst_n = 1'b1;
+
+        #600000000;   // 600 ms
+
+        $stop;
+    end
+
+    // monitor
+    initial begin
+        $monitor("time=%0t ns, rst_n=%b, CLK_sync=%b, CLK_1Hz=%b",
+                  $time, rst_n, CLK_sync, CLK_1Hz);
+    end
+
+    // 观察 Flip 脉冲
+    always @(posedge CLK_sync) begin
+        $display(">>> CLK_sync pulse at time = %0t ns", $time);
+    end
+
+    // 观察 1Hz 输出翻转
+    always @(CLK_1Hz) begin
+        $display(">>> CLK_1Hz changed to %b at time = %0t ns", CLK_1Hz, $time);
+    end
+
+endmodule
