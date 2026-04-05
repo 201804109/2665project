@@ -10,7 +10,7 @@ module ClockDivider (
 	wire Flip;
 	wire reset;
 	Comparator c1(Q,Flip);
-	assign reset = rst_n&(Flip);
+	assign reset = rst_n&(~Flip);
 
 	DtypeFF d0 (CLK_50MHz,1'b1,~Q[0],reset,Q[0]);
 	DtypeFF d1(~Q[0], 1'b1, ~Q[1], reset, Q[1]);
