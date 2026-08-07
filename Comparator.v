@@ -2,12 +2,14 @@ module Comparator (
     input  [24:0] Q,
     output Flip
 );
-    wire [24:0] S;
-    wire [24:0] C;
+    wire [25:0] S;
+    wire [25:0] C;
     // Q - 24999999
-    // 24999999 = 25'b1011111010111100000111111	 
+    // 24999999 = 25'b01011111010111100000111111	 
+	 // -24999999= 26'b10100000101000011111000001
 	 
-	 OneBitFullAdder fa0  (Q[0],  1'b0, 1'b1, S[0],  C[0]);
+	 
+	 OneBitFullAdder fa0  (Q[0],  1'b1, 1'b1, S[0],  C[0]);
     OneBitFullAdder fa1  (Q[1],  1'b0, C[0], S[1],  C[1]);
     OneBitFullAdder fa2  (Q[2],  1'b0, C[1], S[2],  C[2]);
     OneBitFullAdder fa3  (Q[3],  1'b0, C[2], S[3],  C[3]);
@@ -32,6 +34,7 @@ module Comparator (
     OneBitFullAdder fa22 (Q[22], 1'b0, C[21], S[22], C[22]);
     OneBitFullAdder fa23 (Q[23], 1'b1, C[22], S[23], C[23]);
     OneBitFullAdder fa24 (Q[24], 1'b0, C[23], S[24], C[24]);
-	 //assign Flip = S[24];
-	 assign Flip = (~S[24])&(~S[23])&(~S[22])&(~S[21])&(~S[20])&(~S[19])&(~S[18])&(~S[17])&(~S[16])&(~S[15])&(~S[14])&(~S[13])&(~S[12])&(~S[11])&(~S[10])&(~S[9])&(~S[8])&(~S[7])&(~S[6])&(~S[5])&(~S[4])&(~S[3])&(~S[2])&(~S[1])&(~S[0]);
+    OneBitFullAdder fa25 (1'b0 , 1'b1, C[24], S[25], C[25]);	 
+	 assign Flip = ~|S[24:0];
+	 //assign Flip = (~S[24])&(~S[23])&(~S[22])&(~S[21])&(~S[20])&(~S[19])&(~S[18])&(~S[17])&(~S[16])&(~S[15])&(~S[14])&(~S[13])&(~S[12])&(~S[11])&(~S[10])&(~S[9])&(~S[8])&(~S[7])&(~S[6])&(~S[5])&(~S[4])&(~S[3])&(~S[2])&(~S[1])&(~S[0]);
 endmodule

@@ -2,15 +2,21 @@ module ClockDivider (
 
 	input CLK_50MHz, 
 	input rst_n,
+
 	output CLK_1Hz
 //	output CLK_sync //This is optional, remove if you do not need it.
+//	output [24:0] Q_out,
+//	output Flip_out,
+//	output reset_out
 );
 	wire [24:0]Q;
 	wire  FIL;
 	wire Flip;
 	wire reset;
 	Comparator c1(Q,Flip);
-	assign reset = rst_n&(~Flip);
+	wire Flip_reg;
+	DtypeFF Flip_sync (CLK_50MHz, 1'b1, Flip, rst_n, Flip_reg);
+	assign reset = rst_n & (~Flip_reg);
 
 	DtypeFF d0 (CLK_50MHz,1'b1,~Q[0],reset,Q[0]);
 	DtypeFF d1(~Q[0], 1'b1, ~Q[1], reset, Q[1]);
@@ -41,4 +47,7 @@ module ClockDivider (
 	
 	JKTypeFF d(Flip,rst_n,1'b1, 1'b1, FIL);
 	assign CLK_1Hz = FIL;
+//	assign Q_out = Q;
+//	assign Flip_out = Flip;
+//	assign reset_out = reset;
 endmodule
